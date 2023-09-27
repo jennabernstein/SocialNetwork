@@ -22,8 +22,16 @@ profile_layout = [
     [sg.Text("Profile Information", font=("Helvetica", 16), justification="center", key="-PROFILE-INFO-", visible=False)],
     [sg.Text("Username:", visible=False), sg.Text("", key="-USERNAME-", visible=False)],
     [sg.Text("Name:", visible=False), sg.Text("", key="-NAME-", visible=False)],
-    [sg.Text("Email:", visible=False), sg.Text("", key="-EMAIL-", visible=False)],
+    [sg.Text("Email:", visible=False), sg.Text("", key="-EMAIL-", visible=False)],  # Display the email
+    [sg.Text("Number of Friends:", visible=False), sg.Text("", key="-NUM-FRIENDS-", visible=False)],  # New label for number of friends
+    [sg.Button("Show Friends", key="-FRIENDS-", size=(15, 1), visible=False),
+    sg.Button("Hide Friends", key="-HIDE-FRIENDS-", size=(15, 1), visible=False)], 
     [sg.Button("Edit", key="-EDIT-", size=(10, 1), visible=False)],
+]
+
+friends_layout = [
+    [sg.Text("Friends", font=("Helvetica", 16), justification="center", key="-FRIENDS-INFO-", visible=False)],
+    [sg.Listbox(values=[], size=(20, 10), key="-FRIEND-LIST-", visible=False, select_mode="LISTBOX_SELECT_MODE_SINGLE")]
 ]
 
 edit_layout = [
@@ -34,6 +42,9 @@ edit_layout = [
     [sg.Button("Save Changes", key="-SAVE-", size=(15, 1), visible=False), sg.Button("Cancel", key="-CANCEL-EDIT-", size=(10, 1), visible=False)],
 ]
 
+# ... (Rest of your code remains unchanged) ...
+
+# Define the GUI layout
 layout = [
     [
         sg.Text("Enter Username to Search:"),
@@ -50,6 +61,7 @@ layout = [
         ),
         sg.Column(profile_layout, key="-PROFILE-", element_justification="left"),
         sg.Column(edit_layout, key="-EDIT PROFILE-", element_justification="left", visible=False),
+        sg.Column(friends_layout, key="-FRIENDS-", element_justification="left", visible=True),
     ],
     [
         sg.Button("Add New Profile", key="-ADD-", size=(15, 1)),
@@ -64,6 +76,7 @@ window = sg.Window("Profile Search", layout)
 
 selected_profile = None  # To keep track of the selected profile
 original_values = {}  # To store the original profile values
+friends_visible = True  # Track if friends list is visible
 
 # Event loop
 while True:
@@ -85,7 +98,10 @@ while True:
         window["-PROFILE-INFO-"].update(visible=False)
         window["-USERNAME-"].update(visible=False)
         window["-NAME-"].update(visible=False)
-        window["-EMAIL-"].update(visible=False)
+        window["-EMAIL-"].update(visible=False)  # Hide the email
+        window["-NUM-FRIENDS-"].update(visible=False)  # Hide the number of friends label
+        window["-FRIENDS-"].update(visible=False)  # Hide the "Show Friends" button
+        window["-HIDE-FRIENDS-"].update(visible=False)  # Hide the "Hide Friends" button
         window["-EDIT-"].update(visible=False)
 
     elif event == "-PROFILE LIST-":
@@ -101,7 +117,10 @@ while True:
                 window["-PROFILE-INFO-"].update(visible=True)
                 window["-USERNAME-"].update("Username: " + selected_profile.username, visible=True)
                 window["-NAME-"].update("Name: " + selected_profile.name, visible=True)
-                window["-EMAIL-"].update("Email: " + selected_profile.email, visible=True)
+                window["-EMAIL-"].update("Email: " + selected_profile.email, visible=True)  # Display the email
+                window["-NUM-FRIENDS-"].update("Number of Friends: " + str(selected_profile.getNumFriends()), visible=True)  # Show number of friends
+                window["-FRIENDS-"].update(visible=True)  # Show the "Show Friends" button
+                window["-EDIT-"].update(visible=True)
 
                 # Store the original profile values
                 original_values["-USERNAME-"] = selected_profile.username
@@ -111,6 +130,9 @@ while True:
                 # Make the "Edit" button visible
                 window["-EDIT-"].update(visible=True)
                 window["-EDIT PROFILE-"].update(visible=False)  # Hide the edit profile section
+
+                # Show the "Hide Friends" button
+                window["-HIDE-FRIENDS-"].update(visible=False)
 
     elif event == "-EDIT-":
         if selected_profile:
@@ -124,8 +146,11 @@ while True:
             window["-PROFILE-INFO-"].update(visible=False)
             window["-USERNAME-"].update(visible=False)
             window["-NAME-"].update(visible=False)
-            window["-EMAIL-"].update(visible=False)
-            window["-EDIT-"].update(visible=False)
+            window["-EMAIL-"].update(visible=False)  # Hide the email
+            window["-NUM-FRIENDS-"].update(visible=False)  # Hide the number of friends label
+            window["-FRIENDS-"].update(visible=False)  # Hide the "Show Friends" button
+            window["-HIDE-FRIENDS-"].update(visible=False)  # Hide the "Hide Friends" button
+            window["-EDIT-"].update(visible=False)  # Hide the edit button
 
             # Show the editable input fields
             window["-EDIT PROFILE-"].update(visible=True)
@@ -148,7 +173,6 @@ while True:
             original_values["-USERNAME-"] = selected_profile.username
             original_values["-NAME-"] = selected_profile.name
             original_values["-EMAIL-"] = selected_profile.email
-            window["-EDIT-"].update(visible=True)
 
             # Show a message indicating changes have been saved
             sg.popup("Changes saved successfully!")
@@ -156,7 +180,11 @@ while True:
             # Show the profile details and hide the editable input fields
             window["-USERNAME-"].update(selected_profile.username, visible=True)
             window["-NAME-"].update(selected_profile.name, visible=True)
-            window["-EMAIL-"].update(selected_profile.email, visible=True)
+            window["-EMAIL-"].update("Email: " + selected_profile.email, visible=True)  # Display the email
+            window["-NUM-FRIENDS-"].update("Number of Friends: " + str(selected_profile.getNumFriends()), visible=True)  # Show number of friends
+            window["-FRIENDS-"].update(visible=True)  # Show the "Show Friends" button
+            window["-HIDE-FRIENDS-"].update(visible=True)  # Show the "Hide Friends" button
+            window["-EDIT-"].update(visible=True)
 
             # Hide the editable input fields and "Save Changes" button
             window["-EDIT PROFILE-"].update(visible=False)
@@ -169,18 +197,34 @@ while True:
             window["-PROFILE-INFO-"].update(visible=True)
             window["-EDIT-USERNAME-"].update(original_values["-USERNAME-"], visible=True)
             window["-EDIT-NAME-"].update(original_values["-NAME-"], visible=True)
-            window["-EDIT-EMAIL-"].update(original_values["-EMAIL-"], visible=True)
-            window["-EDIT-"].update(visible=True)
 
             # Show the profile details and hide the editable input fields
             window["-USERNAME-"].update(selected_profile.username, visible=True)
             window["-NAME-"].update(selected_profile.name, visible=True)
-            window["-EMAIL-"].update(selected_profile.email, visible=True)
+            window["-EMAIL-"].update("Email: " + selected_profile.email, visible=True)  # Display the email
+            window["-NUM-FRIENDS-"].update("Number of Friends: " + str(selected_profile.getNumFriends()), visible=True)  # Show number of friends
+            window["-FRIENDS-"].update(visible=True)  # Show the "Show Friends" button
+            window["-HIDE-FRIENDS-"].update(visible=True)  # Show the "Hide Friends" button
+            window["-EDIT-"].update(visible=True)
 
             # Hide the editable input fields and "Save Changes" button
             window["-EDIT PROFILE-"].update(visible=False)
             window["-SAVE-"].update(visible=False)
             window["-CANCEL-EDIT-"].update(visible=False)
+
+    elif event == "-FRIENDS-":
+        if selected_profile:
+            friends = selected_profile.getFriends()
+            window["-FRIEND-LIST-"].update(values=friends, visible=True)
+            window["-FRIENDS-"].update(visible=False)
+            window["-HIDE-FRIENDS-"].update(visible=True)
+
+    elif event == "-HIDE-FRIENDS-":
+        if selected_profile:
+            # Hide the friend list when the "Hide Friends" button is clicked
+            window["-FRIEND-LIST-"].update(visible=False)
+            window["-HIDE-FRIENDS-"].update(visible=False)
+            window["-FRIENDS-"].update(visible=True)
 
     elif event == "-ADD-":
         # Toggle the visibility of the "Add New Profile" section
@@ -203,8 +247,8 @@ while True:
         profile_usernames = [profile.username for profile in profile_list]
 
         # Check if any of the fields are empty
-        if not new_username or not new_name or not new_email:
-            sg.popup("Please fill in all fields to add a new profile.")
+        if not new_username or not new_name:
+            sg.popup("Please fill in all required fields (Username and Name) to add a new profile.")
         elif new_username in profile_usernames:
             sg.popup("Username already being used. Choose a new one.")
         else:
