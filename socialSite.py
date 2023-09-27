@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 from user import Profile
+from socialNet import SocialNetwork
 
 # Create a list of profile objects
 profile_list = [
@@ -7,6 +8,9 @@ profile_list = [
     Profile("user2", "Alice Smith", "alice@example.com"),
     Profile("user3", "Bob Johnson", "bob@example.com"),
 ]
+
+socialNetwork = SocialNetwork()
+socialNetwork.addPeople(profile_list)
 
 # Define the GUI layout for the add section
 add_layout = [
@@ -31,7 +35,8 @@ profile_layout = [
 
 friends_layout = [
     [sg.Text("Friends", font=("Helvetica", 16), justification="center", key="-FRIENDS-INFO-", visible=False)],
-    [sg.Listbox(values=[], size=(20, 10), key="-FRIEND-LIST-", visible=False, select_mode="LISTBOX_SELECT_MODE_SINGLE")]
+    [sg.Listbox(values=[], size=(20, 10), key="-FRIEND-LIST-", visible=False, select_mode="LISTBOX_SELECT_MODE_SINGLE")],  # Added a comma here
+    [sg.Button("Add Friends", key= "-ADD FRIENDS-", size = (15, 1), visible=False)],  
 ]
 
 edit_layout = [
@@ -42,7 +47,6 @@ edit_layout = [
     [sg.Button("Save Changes", key="-SAVE-", size=(15, 1), visible=False), sg.Button("Cancel", key="-CANCEL-EDIT-", size=(10, 1), visible=False)],
 ]
 
-# ... (Rest of your code remains unchanged) ...
 
 # Define the GUI layout
 layout = [
@@ -53,7 +57,7 @@ layout = [
     ],
     [
         sg.Listbox(
-            values=[profile.username for profile in profile_list],
+            values=[profile.username for profile in socialNetwork.getPeople()],
             size=(20, 10),
             key="-PROFILE LIST-",
             enable_events=True,
@@ -88,7 +92,7 @@ while True:
         search_term = values["-SEARCH-"].strip().lower()  # Get the search term (lowercased for case-insensitive search)
 
         # Filter profiles based on the search term
-        matching_profiles = [profile for profile in profile_list if search_term in profile.username.lower()]
+        matching_profiles = [profile for profile in socialNetwork.getPeople() if search_term in profile.username.lower()]
 
         # Update the profile list in the GUI with usernames
         profile_usernames = [profile.username for profile in matching_profiles]
@@ -109,7 +113,7 @@ while True:
             username = values["-PROFILE LIST-"][0]
 
             # Find the selected profile in the profile_list
-            selected_profile = next((profile for profile in profile_list if profile.username == username), None)
+            selected_profile = next((profile for profile in socialNetwork.getPeople() if profile.username == username), None)
 
             # Update the profile details in the GUI
             if selected_profile:
@@ -165,7 +169,7 @@ while True:
             selected_profile.setEmail(values["-EDIT-EMAIL-"])
 
             # Update the profile list in the GUI with usernames
-            profile_usernames = [profile.username for profile in profile_list]
+            profile_usernames = [profile.username for profile in socialNetwork.getPeople()]
             window["-PROFILE LIST-"].update(values=profile_usernames)
 
             # Update the original values
@@ -203,9 +207,17 @@ while True:
             window["-NAME-"].update(selected_profile.name, visible=True)
             window["-EMAIL-"].update("Email: " + selected_profile.email, visible=True)  # Display the email
             window["-NUM-FRIENDS-"].update("Number of Friends: " + str(selected_profile.getNumFriends()), visible=True)  # Show number of friends
-            window["-FRIENDS-"].update(visible=True)  # Show the "Show Friends" button
-            window["-HIDE-FRIENDS-"].update(visible=True)  # Show the "Hide Friends" button
             window["-EDIT-"].update(visible=True)
+
+            # Check if the "Show Friends" button is visible before toggling its visibility
+            if window["-FRIENDS-"].visible:
+                # keep "show friends" button visible and hide "hide friends"
+                window["-FRIENDS-"].update(visible=True)
+                window["-HIDE-FRIENDS-"].update(visible=False)
+            else:
+                # keep "hide friends" button visible and hide "show friends"
+                window["-FRIENDS-"].update(visible=False)
+                window["-HIDE-FRIENDS-"].update(visible=True)
 
             # Hide the editable input fields and "Save Changes" button
             window["-EDIT PROFILE-"].update(visible=False)
@@ -218,6 +230,7 @@ while True:
             window["-FRIEND-LIST-"].update(values=friends, visible=True)
             window["-FRIENDS-"].update(visible=False)
             window["-HIDE-FRIENDS-"].update(visible=True)
+            window["-ADD FRIENDS-"].update(visible=True)
 
     elif event == "-HIDE-FRIENDS-":
         if selected_profile:
@@ -225,6 +238,7 @@ while True:
             window["-FRIEND-LIST-"].update(visible=False)
             window["-HIDE-FRIENDS-"].update(visible=False)
             window["-FRIENDS-"].update(visible=True)
+            window["-ADD FRIENDS-"].update(visible = False)
 
     elif event == "-ADD-":
         # Toggle the visibility of the "Add New Profile" section
@@ -244,7 +258,7 @@ while True:
         new_username = values["-ADD-USERNAME-"]
         new_name = values["-ADD-NAME-"]
         new_email = values["-ADD-EMAIL-"]
-        profile_usernames = [profile.username for profile in profile_list]
+        profile_usernames = [profile.username for profile in socialNetwork.getPeople()]
 
         # Check if any of the fields are empty
         if not new_username or not new_name:
@@ -254,7 +268,7 @@ while True:
         else:
             # Create a new profile object and add it to the profile list
             new_profile = Profile(new_username, new_name, new_email)
-            profile_list.append(new_profile)
+            socialNetwork.addPerson(new_profile)
 
             # Clear the input fields
             window["-ADD-USERNAME-"].update("")
