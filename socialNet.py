@@ -24,7 +24,7 @@ class SocialNetwork:
 
     def getPeople(self):
         """Returns the list of Persons in the social network"""
-        return list(self.useridToPerson.values())
+        return list(self._useridToPerson.values())
     
     def getNonFriends(self, person):
         """Returns a list of all Person objects that this Person is not friends with."""
@@ -37,7 +37,7 @@ class SocialNetwork:
         
     def getUserIDs(self):
         """ Return the list of user ids in the social network """
-        return list(self.useridToPerson.keys())
+        return list(self._useridToPerson.keys())
         
         
     def hasUserID(self, userid):
