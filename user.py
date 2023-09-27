@@ -4,6 +4,7 @@ class Profile:
         self.username = username
         self.name = name
         self.email = email
+        self.friends = []
 
     def setUsername(self, newUser):
         self.username = newUser
@@ -14,15 +15,19 @@ class Profile:
     def setEmail(self, newEmail):
         self.email = newEmail
 
+    def getUsername(self):
+        return self.username
+
     def addFriend(self, person):
         "Add a person to this Person's friends"
-        self._friends.append(person)
+        self.friends.append(person)
 
     def getNumFriends(self):
         "Returns how many friends this Person has"
-        return len(self._friends)
+        return len(self.friends)
 
     def getFriends(self):
         """Returns a list of Person objects that are friends with this
         Person."""
-        return self._friends
+        return self.friends
+    
