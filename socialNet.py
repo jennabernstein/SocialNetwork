@@ -29,8 +29,8 @@ class SocialNetwork:
     def getNonFriends(self, person):
         """Returns a list of all Person objects that this Person is not friends with."""
         nonfriends = []
-        for user in self.useridToPerson.values():
-            if user not in person.getFriends():
+        for user in self._useridToPerson.values():
+            if user not in person.getFriends() and user is not person:
                 nonfriends.append(user)
         return nonfriends
         

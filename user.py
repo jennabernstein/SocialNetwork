@@ -20,7 +20,8 @@ class Profile:
 
     def addFriend(self, person):
         "Add a person to this Person's friends"
-        self.friends.append(person)
+        if person is not self:
+            self.friends.append(person)
 
     def getNumFriends(self):
         "Returns how many friends this Person has"
