@@ -3,14 +3,19 @@ from user import Profile
 from socialNet import SocialNetwork
 
 # Create a list of profile objects
-profile_list = [
-    Profile("user1", "John Doe", "john@example.com"),
-    Profile("user2", "Alice Smith", "alice@example.com"),
-    Profile("user3", "Bob Johnson", "bob@example.com"),
-]
+
+john = Profile("john.doe", "John Doe", "john@example.com")
+alice = Profile("smithalice", "Alice Smith", "alice@example.com")
+bob = Profile("Bjohnson", "Bob Johnson", "bob@example.com")
+emma = Profile("emmarob", "Emma Robertson", "emmarobinson@example.com")
+ben = Profile("benmitchell", "Ben Mitchell", "bmitchell@example.com")
+
 
 socialNetwork = SocialNetwork()
+profile_list = [john, alice, bob, emma, ben]
 socialNetwork.addPeople(profile_list)
+socialNetwork.addFriends(alice, bob)
+print(alice.getFriends(), bob.getFriends())
 
 # Define the GUI layout for the add section
 add_layout = [
@@ -284,7 +289,7 @@ while True:
                 popup_result = sg.popup_yes_no("Would you like to add " + selected_AddFriend.name + " to " + selected_profile.name + "'s network?", title="Add Friend")
 
                 if popup_result == "Yes":
-                    selected_profile.addFriend(selected_AddFriend)
+                    socialNetwork.addFriends(selected_profile, selected_AddFriend)
                     nonFriends = socialNetwork.getNonFriends(selected_profile)
                     nonFriends = [person.username for person in nonFriends]
                     window["-FRIEND-LIST-"].update(values = nonFriends)

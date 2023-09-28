@@ -1,3 +1,5 @@
+from user import Profile
+
 class SocialNetwork:
 
     """Represents a social network, containing ids that map to Person
@@ -61,3 +63,14 @@ class SocialNetwork:
     def addPeople(self, people):
         for person in people:
             self._useridToPerson[person.getUsername()] = person
+
+    def addFriends(self, person1, person2):
+        "Add a person to each person's friend list"
+        if person1 is not person2:
+            person1.friends.append(person2)
+            person2.friends.append(person1)
+
+    def addFriendList(self, person, people):
+        "Add a list of people to this Person's friends"
+        for user in people:
+            self.addFriends(person, user)
