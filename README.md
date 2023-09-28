@@ -12,8 +12,8 @@ Popup tells you a profile has successfully been added (all fields are required t
 
 ## Editing Profiles
 Ability to edit profiles within text editor boxes to update profile information. Notifies the user when new changes have been saved through a popup.<br>
-<img src="images/editProf.png" height="200">
-<img src="images/changesSaved.png" height="200">
+<img src="images/editProf.png" width = "300">
+<img src="images/changesSaved.png" width = "300">
 
 ## Adding Connections
 
