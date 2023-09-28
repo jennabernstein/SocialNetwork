@@ -138,8 +138,16 @@ while True:
                 window["-EDIT-"].update(visible=True)
                 window["-EDIT PROFILE-"].update(visible=False)  # Hide the edit profile section
 
-                # Show the "Hide Friends" button
-                window["-HIDE-FRIENDS-"].update(visible=False)
+                if window["-FRIEND-LIST-"].visible:
+                    window["-FRIEND-LIST-"].update(visible = False)
+                if window["-ADD FRIENDS-"].visible:
+                    window["-ADD FRIENDS-"].update(visible = False)
+                if window["-FRIENDS-INFO-"].visible:
+                    window["-FRIENDS-INFO-"].update(visible = False)
+                if window["-HIDE-FRIENDS-"].visible:
+                    window["-HIDE-FRIENDS-"].update(visible = False)
+                    window["-FRIENDS-"].update(visible = True)
+
 
     elif event == "-EDIT-":
         if selected_profile:
@@ -233,7 +241,7 @@ while True:
         if selected_profile:
             friends = selected_profile.getFriends()
             window["-FRIEND-LIST-"].update(values=friends, visible=True)
-            window["-FRIENDS-INFO-"].update(visible = True)
+            window["-FRIENDS-INFO-"].update("Friends", visible = True)
             window["-FRIENDS-"].update(visible=False)
             window["-HIDE-FRIENDS-"].update(visible=True)
             window["-ADD FRIENDS-"].update(visible=True)
@@ -246,6 +254,7 @@ while True:
             window["-FRIENDS-INFO-"].update(visible = False)
             window["-FRIENDS-"].update(visible=True)
             window["-ADD FRIENDS-"].update(visible = False)
+            window["-FRIENDS-INFO-"].update("Friends")
 
     elif event == "-ADD FRIENDS-":
         nonFriends = socialNetwork.getNonFriends(selected_profile)
@@ -253,12 +262,32 @@ while True:
         window["-FRIEND-LIST-"].update(values = nonFriends, visible=True)
         window["-FRIENDS-INFO-"].update("Friends to Add")
 
+    elif event == "-FRIEND-LIST-":
+        print("Clicked on a friend in the list.")
+        if values["-FRIEND-LIST-"]:
+            username = values["-FRIEND-LIST-"][0]
+            # Find the selected profile in the profile_list
+            selected_AddFriend = next((profile for profile in socialNetwork.getNonFriends(selected_profile) if profile.username == username), None)
+            if selected_AddFriend:
+                selected_profile.addFriend(selected_AddFriend)
+                sg.popup(selected_AddFriend.username + " added!")
+                print(selected_profile.friends)
+
 
 
     elif event == "-ADD-":
         # Toggle the visibility of the "Add New Profile" section
         window["-ADD-"].update(visible=False)
         window["-ADD-SECTION-"].update(visible=True)
+        if window["-FRIEND-LIST-"].visible:
+            window["-FRIEND-LIST-"].update(visible = False)
+        if window["-ADD FRIENDS-"].visible:
+            window["-ADD FRIENDS-"].update(visible = False)
+        if window["-FRIENDS-INFO-"].visible:
+            window["-FRIENDS-INFO-"].update(visible = False)
+        if window["-HIDE-FRIENDS-"].visible:
+            window["-HIDE-FRIENDS-"].update(visible = False)
+            window["-FRIENDS-"].update(visible = True)
 
     elif event == "-CANCEL-ADD-":
         # Clear the input fields and hide the "Add New Profile" section
@@ -276,8 +305,8 @@ while True:
         profile_usernames = [profile.username for profile in socialNetwork.getPeople()]
 
         # Check if any of the fields are empty
-        if not new_username or not new_name:
-            sg.popup("Please fill in all required fields (Username and Name) to add a new profile.")
+        if not new_username or not new_name or not new_email:
+            sg.popup("Please fill in all required fields to add a new profile.")
         elif new_username in profile_usernames:
             sg.popup("Username already being used. Choose a new one.")
         else:
