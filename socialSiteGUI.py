@@ -241,7 +241,7 @@ while True:
 
     elif event == "-FRIENDS-":
         if selected_profile:
-            friends = selected_profile.getFriends()
+            friends = [profile.username for profile in selected_profile.getFriends()]
             window["-FRIEND-LIST-"].update(values=friends, visible=True)
             window["-FRIENDS-INFO-"].update("Friends", visible = True)
             window["-FRIENDS-"].update(visible=False)
@@ -285,6 +285,10 @@ while True:
 
                 if popup_result == "Yes":
                     selected_profile.addFriend(selected_AddFriend)
+                    nonFriends = socialNetwork.getNonFriends(selected_profile)
+                    nonFriends = [person.username for person in nonFriends]
+                    window["-FRIEND-LIST-"].update(values = nonFriends)
+                    window["-NUM-FRIENDS-"].update("Number of Friends: " + str(selected_profile.getNumFriends()))
                     sg.popup(selected_AddFriend.name + " successfully added to " + selected_profile.name + "'s network!")
 
 
