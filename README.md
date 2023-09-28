@@ -1,5 +1,5 @@
 # SocialNetwork
-Social Network GUI in Python where you can view profiles and add connections
+Social Network GUI in Python where you can add and view profiles and add connections
 
 ## Adding New Profiles
 Ability to add new profiles within the GUI once pressing the "Add New Profile" button
@@ -11,6 +11,9 @@ Popup tells you a profile has successfully been added (all fields are required t
 <img src="images/ProfileAdded.png" height="200"><br>
 
 ## Editing Profiles
+Ability to edit profiles within text editor boxes to update profile information. Notifies the user when new changes have been saved through a popup.<br>
+<img src="images/editProf.png" height="200">
+<img src="images/changesSaved.png" height="200">
 
 ## Adding Connections
 
