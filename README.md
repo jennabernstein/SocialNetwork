@@ -3,7 +3,7 @@ Social Network GUI in Python where you can view profiles and add friends
 
 
 ## Adding New Profiles
-![Add New Profile](images/addNew.png)
+<img src="images/addNew.png" width="50" height="50">
 
 ## Editing Profiles
 
