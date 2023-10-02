@@ -1,6 +1,6 @@
 # SocialNetwork
 Social Network GUI in Python where you can add and view profiles and add connections from an administrator view.<br>
-<img src = "images/FirstScreen.png" width = "300">
+<img src = "images/FirstScreen.png" width = "400">
 
 ## Adding New Profiles
 Ability to add new profiles within the GUI once pressing the "Add New Profile" button
